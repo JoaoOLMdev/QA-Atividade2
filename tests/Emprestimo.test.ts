@@ -24,13 +24,20 @@ describe("Emprestimo", () => {
     });
 
     test("Deve adicionar um empréstimo", () => {
-        (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify([{
-            cpf: membro.cpf, ISBN: livro.ISBN, dataEmprestimo: "2021-08-01", dataDevolucao: '2021-08-15'
-        }]));
+        const emprestimoExistente = {cpf: membro.cpf, ISBN: livro.ISBN, dataEmprestimo: "2021-08-01", dataDevolucao: '2021-08-15'};
+        (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify([emprestimoExistente]));
         emprestimo.adicionar();
         expect(fs.writeFileSync).toHaveBeenCalledWith(
             './data/emprestimos.json',
-            JSON.stringify([{cpf: membro.cpf, ISBN: livro.ISBN, dataEmprestimo, dataDevolucao}], null, 2)
+            JSON.stringify([
+                emprestimoExistente,
+                {
+                    cpfMembro: membro.cpf,
+                    ISBN_livro: livro.ISBN,
+                    dataEmprestimo,
+                    dataDevolucao
+                }
+            ], null, 2)
         );
     });
 
